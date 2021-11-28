@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Prebuild') {
+            agent any
+            steps {
+                // Install docker compose to Jenkins
+                sh 'curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+                sh 'chmod +x /usr/local/bin/docker-compose'
+                sh 'docker-compose --version'
+
+                // Removes existing docker container
+                sh 'docker-compose down'
+                sh 'docker ps -f name=client -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=client -q | xargs -r docker container rm'
+                sh 'docker ps -f name=jenkins -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=jenkins -q | xargs -r docker container rm'
+            }
+        }
+
+        stage('Clone Git') {
+            agent any
+            steps {
+                // Fetches github repository automatically and run docker
+                git credentialsId: 'bf719e12-8a38-431a-879e-fdd2b50f9136', url: 'https://github.com/SIT-ICT3x03/Team09-AY21.git'
+                sh "docker-compose up --build -d"
+            }
+        }
+    }
+}
