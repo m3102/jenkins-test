@@ -5,16 +5,16 @@ services:
     build:
       context: ./client
     ports:
-      - "3000:3000"
+      - "5000:5000"
     hostname: client
     expose:
-      - "3000"
+      - "5000"
     networks:
       - linkednetwork
     restart: unless-stopped
 
   jenkins:
-    image: jenkins/jenkins:lts
+    image: jenkinsci/blueocean
     privileged: true
     user: root
     ports:
@@ -25,15 +25,19 @@ services:
       - ~/jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/local/bin/docker:/usr/local/bin/docker
+    networks:
+      - linkednetwork
 
   sonarqube:
     image: sonarqube:8.2-community
+    container_name: sonarqube
     ports:
-      - "9000:9000"
+      - "9005:9000"
+    expose:
+      - 9005
     networks:
       - sonarnet
     environment:
-      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
       - sonar.jdbc.username=sonar
       - sonar.jdbc.password=sonar
     volumes:
@@ -48,7 +52,7 @@ networks:
   linkednetwork:
 
 volumes:
-  sonarqube_conf: {}
-  sonarqube_data: {}
-  sonarqube_extensions: {}
-  sonarqube_bundled-plugins: {}
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_bundled-plugins:
