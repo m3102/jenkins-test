@@ -14,8 +14,12 @@ pipeline {
                 sh 'docker-compose down'
                 sh 'docker ps -f name=client -q | xargs --no-run-if-empty docker container stop'
                 sh 'docker container ls -a -fname=client -q | xargs -r docker container rm'
+
                 sh 'docker ps -f name=jenkins -q | xargs --no-run-if-empty docker container stop'
                 sh 'docker container ls -a -fname=jenkins -q | xargs -r docker container rm'
+
+                sh 'docker ps -f name=sonarqube -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=sonarqube -q | xargs -r docker container rm'
             }
         }
 
