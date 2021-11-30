@@ -2,6 +2,51 @@ pipeline {
     agent any
 
     stages {
-       
+        stage('Prebuild') {
+            agent any
+            steps {
+                // Install docker compose to Jenkins
+                sh 'sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+                sh 'sudo chmod +x /usr/local/bin/docker-compose'
+                sh 'sudo docker-compose --version'
+
+                // Removes existing docker container
+                sh 'sudo docker-compose down'
+                sh 'sudo docker ps -f name=client -q | xargs --no-run-if-empty docker container stop'
+                sh 'sudo docker container ls -a -fname=client -q | xargs -r docker container rm'
+
+                sh 'sudo docker ps -f name=jenkins -q | xargs --no-run-if-empty docker container stop'
+                sh 'sudo docker container ls -a -fname=jenkins -q | xargs -r docker container rm'
+
+                sh 'sudo docker ps -f name=sonarqube -q | xargs --no-run-if-empty docker container stop'
+                sh 'sudo docker container ls -a -fname=sonarqube -q | xargs -r docker container rm'
+            }
+        }
+
+        stage('Clone Git') {
+            agent any
+            steps {
+                // Fetches github repository automatically and run docker
+                git branch: 'main', url: 'https://github.com/helloitsm3/jenkins-test.git'
+                sh "sudo docker-compose up --build -d"
+            }
+        }
+
+        stage("Checkout") {
+            steps {
+                git branch: "master", url: "https://github.com/OWASP/Vulnerable-Web-Application.git"
+            }
+        }
+
+        stage("Code Quality Check via SonarQube") {
+            steps {
+                script {
+                    def scannerHome = tool "SonarQube";
+                    withSonarQubeEnv("SonarQube") {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=OWASP -DSonar.sources=."
+                    }
+                }
+            }
+        }
     }
 }
