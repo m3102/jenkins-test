@@ -23,14 +23,14 @@ pipeline {
             }
         }
 
-        stage('Clone Git') {
-            agent any
-            steps {
-                // Fetches github repository automatically and run docker
-                git branch: 'main', url: 'https://github.com/helloitsm3/jenkins-test.git'
-                sh "sudo docker-compose up --build -d"
-            }
-        }
+        // stage('Clone Git') {
+        //     agent any
+        //     steps {
+        //         // Fetches github repository automatically and run docker
+        //         git branch: 'main', url: 'https://github.com/helloitsm3/jenkins-test.git'
+        //         sh "sudo docker-compose up --build -d"
+        //     }
+        // }
 
         stage("Checkout") {
             steps {
