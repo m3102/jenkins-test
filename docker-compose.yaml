@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   client:
     container_name: client
@@ -57,6 +57,14 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+
+  sonarscanner:
+    container_name: sonarscanner
+    image: newtmitch/sonar-scanner
+    networks:
+      - sonarnet
+    volumes:
+      - ./:/usr/src
 
 networks:
   sonarnet:

@@ -39,20 +39,13 @@ pipeline {
         }
 
         stage("Code Quality Check via SonarQube") {
-            // steps {
-            //     // script {
-            //         // def scannerHome = tool "SonarQube";
-            //         // withSonarQubeEnv("SonarQube") {
-            //         //     sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=OWASP -DSonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=testingtoken"
-            //         // }
-            //     // }
-            //     docker.image('sonarqube/sonar-scanner').inside('-v /var/run/docker.sock:/var/run/docker.sock --entrypoint=""') {
-            //         sh "/usr/local/bin/sonar-scanner --version"
-            //     }
-            // }
-
-            docker.image('sonarqube/sonar-scanner').inside('-v /var/run/docker.sock:/var/run/docker.sock --entrypoint=""') {
-                sh "/usr/local/bin/sonar-scanner --version"
+            steps {
+                script {
+                    def scannerHome = tool "SonarQube";
+                    withSonarQubeEnv("SonarQube") {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=OWASP -DSonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=testingtoken"
+                    }
+                }
             }
         }
     }
