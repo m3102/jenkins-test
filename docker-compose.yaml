@@ -38,6 +38,7 @@ services:
     networks:
       - sonarnet
     environment:
+      - sonar.jdbc:postgresql://db:5432/sonarqube
       - sonar.jdbc.username=admin
       - sonar.jdbc.password=admin
     volumes:
@@ -45,6 +46,19 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+
+  db:
+    image: postgres
+    networks:
+      - sonarnet
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    restart: on-failure
+    container_name: postgresql
 
 networks:
   sonarnet:
