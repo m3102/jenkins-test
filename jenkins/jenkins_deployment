@@ -6,7 +6,7 @@ pipeline {
             agent any
             steps {
                 // Install docker compose to Jenkins
-                sh 'curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+                sh 'sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
                 sh 'chmod +x /usr/local/bin/docker-compose'
                 sh 'docker-compose --version'
 
@@ -29,6 +29,23 @@ pipeline {
                 // Fetches github repository automatically and run docker
                 git credentialsId: 'bf719e12-8a38-431a-879e-fdd2b50f9136', url: 'https://github.com/SIT-ICT3x03/Team09-AY21.git'
                 sh "docker-compose up --build -d"
+            }
+        }
+
+        stage("Checkout") {
+            steps {
+                git branch: "master", url: "https://github.com/OWASP/Vulnerable-Web-Application.git"
+            }
+        }
+
+        stage("Code Quality Check via SonarQube") {
+            steps {
+                script {
+                    def scannerHome = tool "SonarQube";
+                    withSonarQubeEnv("SonarQube") {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=OWASP -DSonar.sources=."
+                    }
+                }
             }
         }
     }
