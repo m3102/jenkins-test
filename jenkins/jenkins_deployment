@@ -27,7 +27,7 @@ pipeline {
             agent any
             steps {
                 // Fetches github repository automatically and run docker
-                git branch: 'main' credentialsId: 'b7a641dc-a0e9-4919-a9f3-eb58d0d38fdd', url: 'https://github.com/helloitsm3/jenkins-test.git'
+                git branch: 'main', url: 'https://github.com/helloitsm3/jenkins-test.git'
                 sh "sudo docker-compose up --build -d"
             }
         }
