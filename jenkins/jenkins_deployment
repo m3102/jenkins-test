@@ -28,6 +28,10 @@ pipeline {
             steps {
                 // Fetches github repository automatically and run docker
                 // git credentialsId: 'bf719e12-8a38-431a-879e-fdd2b50f9136', url: 'https://github.com/SIT-ICT3x03/Team09-AY21.git'
+                sh "cd documents"
+                sh "rm -rf projects"
+                sh "mkdir projects"
+                sh "cd projects"
                 sh "git clone https://github.com/helloitsm3/jenkins-test.git"
                 sh "sudo docker-compose up --build -d"
             }
