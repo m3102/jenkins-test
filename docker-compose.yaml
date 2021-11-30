@@ -9,8 +9,6 @@ services:
     hostname: client
     expose:
       - "5000"
-    networks:
-      - linkednetwork
     restart: unless-stopped
 
   jenkins:
@@ -25,11 +23,23 @@ services:
       - ~/jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/local/bin/docker:/usr/local/bin/docker
+
+  db:
+    image: postgres
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=sonardb
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
     networks:
-      - linkednetwork
+      - sonarnet
 
   sonarqube:
-    image: sonarqube
+    image: sonarqube:latest
     container_name: sonarqube
     ports:
       - "9000:9000"
@@ -39,35 +49,22 @@ services:
     networks:
       - sonarnet
     environment:
-      - sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube
-      - sonar.jdbc.username=sonarqube
-      - sonar.jdbc.password=xxx
+      - sonar.jdbc:postgresql://db:5432/sonardb
+      - SONARQUBE_JDBC_USERNAME=admin
+      - SONARQUBE_JDBC_PASSWORD=admin
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
-  db:
-    image: postgres
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=sonarqube
-      - POSTGRES_PASSWORD=sonarpass
-      - POSTGRES_DB=sonarqube
-    volumes:
-      - sonarqube_db:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-
 networks:
   sonarnet:
-    driver: bridge
-  linkednetwork:
 
 volumes:
-  postgresql_data:
-  sonarqube_bundled-plugins:
   sonarqube_conf:
   sonarqube_data:
-  sonarqube_db:
   sonarqube_extensions:
+  sonarqube_bundled-plugins:
+  postgresql:
+  postgresql_data:
