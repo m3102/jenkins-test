@@ -49,16 +49,14 @@ services:
 
   db:
     image: postgres
-    networks:
-      - sonarnet
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
+      - POSTGRES_USER=sonarqube
+      - POSTGRES_PASSWORD=sonarpass
+      - POSTGRES_DB=sonarqube
     volumes:
-      - postgresql:/var/lib/postgresql
+      - sonarqube_db:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
-    restart: on-failure
-    container_name: postgresql
 
 networks:
   sonarnet:
@@ -66,7 +64,9 @@ networks:
   linkednetwork:
 
 volumes:
+  postgresql_data:
+  sonarqube_bundled-plugins:
   sonarqube_conf:
   sonarqube_data:
+  sonarqube_db:
   sonarqube_extensions:
-  sonarqube_bundled-plugins:
