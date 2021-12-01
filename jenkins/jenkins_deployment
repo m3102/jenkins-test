@@ -14,7 +14,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Prebuild') {
             agent any
             steps {
@@ -68,12 +68,6 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            recordIssues enabledForFailure: true, tool: sonarQube()
         }
     }
 }
