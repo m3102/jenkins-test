@@ -18,6 +18,11 @@ services:
       - "9005:9000"
     expose:
       - 9005
+    command: >
+      command: -Dsonar.ce.javaOpts=-Xms512m
+      command: -Dsonar.ce.javaOpts=-Xmx2048m
+      command: -Dsonar.sonar.search.javaOpts=-Xms512m
+      command: -Dsonar.sonar.search.javaOpts=-Xmx2048m
     depends_on:
       - postgresql
     networks:
