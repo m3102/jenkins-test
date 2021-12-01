@@ -36,22 +36,8 @@ pipeline {
         }
 
         stage("Check Sonarqube Up") {
-            steps: {
-                withSonarQubeEnv('SonarQube') {
-                    sh "${scannerHome}/bin/sonar-scanner"
-                }
-                    
-                sleep time: 30000, unit: 'MILLISECONDS'
-                echo "test1"
-                script {
-                    echo "test2"
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        echo "test3" 
-                    }
-                }
-            }
+            echo 'Waiting 2 minutes for deployment to complete prior starting smoke testing'
+            sleep(time: 120, unit:"SECONDS")
         }
 
         stage("Code Quality Check via SonarQube") {
