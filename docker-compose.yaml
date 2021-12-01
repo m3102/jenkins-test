@@ -36,8 +36,6 @@ services:
       - sonarnet
     environment:
       - sonar.jdbc:postgresql://db:5432/sonardb
-      - SONARQUBE_JDBC_USERNAME=admin
-      - SONARQUBE_JDBC_PASSWORD=admin
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
