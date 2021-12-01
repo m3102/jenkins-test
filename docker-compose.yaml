@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=sonardb
     volumes:
       - postgresql:/var/lib/postgresql
@@ -37,7 +37,7 @@ services:
     environment:
       - sonar.jdbc:postgresql://db:5432/sonardb
       - SONARQUBE_JDBC_USERNAME=admin
-      - SONARQUBE_JDBC_PASSWORD=admin
+      - SONARQUBE_JDBC_PASSWORD=password
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
