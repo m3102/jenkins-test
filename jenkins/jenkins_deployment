@@ -45,9 +45,7 @@ pipeline {
                     withSonarQubeEnv("SonarQube") {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=OWASP \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=testingtoken"
+                            -Dsonar.sources=."
                     }
                 }
             }
