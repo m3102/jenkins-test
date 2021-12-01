@@ -1,0 +1,110 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('OWASP DependencyCheck') {    
+            agent any
+            steps {
+                dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
+            }
+
+            post {
+                always {
+                    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                }
+            }
+        }
+
+        stage('Prebuild') {
+            agent any
+            steps {
+                // Install docker compose to Jenkins
+                sh 'curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+                sh 'chmod +x /usr/local/bin/docker-compose'
+                sh 'docker-compose --version'
+
+                // Creates .env file to the server side automatically
+                sh "echo POSTGRES_DB='$POSTGRES_DB' >> ./Server/.env"
+                sh "echo TOKEN_KEY='$TOKEN_KEY' >> ./Server/.env"
+                sh "echo TOKEN_ALGORITHM='$TOKEN_ALGORITHM' >> ./Server/.env"
+                sh "echo AES_ENCRYPT_KEY='$AES_ENCRYPT_KEY' >> ./Server/.env"
+                sh "echo SENDGRID_API_KEY='$SENDGRID_API_KEY' >> ./Server/.env"
+                sh "echo SENDGRID_SENDER_EMAIL='$SENDGRID_SENDER_EMAIL' >> ./Server/.env"
+                sh "echo GOOGLE_CLIENT_ID='$GOOGLE_CLIENT_ID' >> ./Server/.env"
+
+                // Creates .env.local file to the client side automatically
+                sh "echo RECAPTCHA_SITE_KEY='$RECAPTCHA_SITE_KEY' >> ./ClientApp/.env.local"
+                sh "echo RECAPTCHA_SECRET_KEY='$RECAPTCHA_SECRET_KEY' >> ./ClientApp/.env.local"
+                sh "echo GOOGLE_CLIENT_ID='$GOOGLE_CLIENT_ID' >> ./ClientApp/.env.local"
+                sh "echo GOOGLE_CLIENT_SECRET='$GOOGLE_CLIENT_SECRET' >> ./ClientApp/.env.local"
+                sh "echo AES_ENCRYPT_KEY='$AES_ENCRYPT_KEY' >> ./ClientApp/.env.local"
+
+                // Removes existing docker container
+                sh 'docker-compose down'
+                sh 'docker ps -f name=client -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=client -q | xargs -r docker container rm'
+                sh 'docker ps -f name=server -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=server -q | xargs -r docker container rm'
+            }
+        }
+
+        stage('Clone Git') {
+            agent any
+            steps {
+                // Fetches github repository automatically and run docker
+                git credentialsId: 'bf719e12-8a38-431a-879e-fdd2b50f9136', url: 'https://github.com/SIT-ICT3x03/Team09-AY21.git'
+                sh "docker-compose up --build -d"
+            }
+        }
+
+        stage('UI Test') {
+            agent {
+                docker {
+                    image 'python:3.9.5-slim'
+                }
+            }
+
+            steps {
+                sh 'apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
+                sh 'pip install -r Server/requirements.txt'
+                sh 'cd Server/tests && python ui.py'
+            } 
+
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/ui-test-reports/*.xml'
+                }
+            } 
+        }
+
+        stage('Unit / Integration Tests') {
+            agent {
+                docker {
+                    image 'python:3.9.5-slim'
+                }
+            }
+
+            environment{
+                POSTGRES_DB             = credentials('POSTGRES_DB')
+                TOKEN_KEY               = credentials('TOKEN_KEY')
+                SENDGRID_API_KEY        = credentials('SENDGRID_API_KEY')
+                SENDGRID_SENDER_EMAIL   = credentials('SENDGRID_SENDER_EMAIL')
+                AES_ENCRYPT_KEY         = credentials('AES_ENCRYPT_KEY')
+            }
+
+            steps {
+                sh 'apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
+                sh 'pip install -r Server/requirements.txt'
+                sh 'cd Server/tests && python unit-integration.py'
+            }
+
+            post {
+                always {
+                    junit 'Server/unit-integration-test-reports/*.xml'
+                }
+            } 
+        }
+    }
+}

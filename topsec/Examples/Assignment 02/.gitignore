@@ -1,0 +1,5 @@
+﻿Client/env.local
+Client/.next
+Client/package-lock.json
+Client/node_modules
+Server/constants/profile_image

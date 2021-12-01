@@ -1,0 +1,30 @@
+version: "3"
+services:
+  client:
+    container_name: client
+    build:
+      context: ./ClientApp
+    ports:
+      - "3000:3000"
+    hostname: client
+    env_file: ./ClientApp/.env.local
+    expose:
+      - "3000"
+    networks:
+      - linkednetwork
+    restart: unless-stopped
+
+  server:
+    container_name: server
+    build:
+      context: ./Server
+    env_file: ./Server/.env
+    hostname: server
+    ports:
+      - "5000:5000"
+    networks:
+      - linkednetwork
+    restart: unless-stopped
+
+networks:
+  linkednetwork:

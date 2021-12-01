@@ -1,0 +1,87 @@
+Setting up Jenkins CI / CD
+
+1. sudo apt-get update
+
+// Installs Java 11
+1. sudo apt install openjdk-11-jre
+
+// Set default java version
+2. sudo update-alternatives --config java 			
+
+// Adds key
+3. wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+
+4. sudo apt-add-repository "deb https://pkg.jenkins.io/debian-stable binary/"
+5. sudo apt-get install --reinstall ca-certificates
+5. sudo apt update
+6. sudo apt install jenkins
+7. sudo systemctl start jenkins
+
+// Check status
+8. sudo systemctl status jenkins
+
+// Opens firewall
+9. sudo ufw allow 8080
+
+// If firewall is inactive (Optional)
+10. sudo ufw allow OpenSSH
+11. sudo ufw enable
+
+// Firewall status
+12. sudo ufw status
+
+// Get jenkins password
+13. sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+14. sudo apt install docker.io
+
+15. sudo passwd jenkins // Reset jenkins password
+
+
+
+
+
+
+
+// Increase virtual memory for Sonarqube
+1. sudo sysctl -w vm.max_map_count=262144
+2. sudo apt-get install curl // Install curl
+
+
+// Add jenkins to Sudo group in linux
+1. sudo visudo
+2. Add `jenkins ALL=(ALL:ALL) NOPASSWD : ALL` below root
+
+Alternatively you can do
+
+1. sudo visudo -f /etc/sudoers.d/jenkins
+2. jenkins ALL=(ALL) NOPASSWD: ALL
+
+1. sudo apt install maven
+2. sudo chmod 666 /var/run/docker.sock // Fix docker permission denied
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Jenkins Plugin
+- Github
+- Sonar Scanner
+- Nodejs
+- Blueocean
+- OWASP Dependency-Check Plugin
+- Docker
+- Docker Pipeline
