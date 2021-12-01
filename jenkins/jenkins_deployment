@@ -17,9 +17,6 @@ pipeline {
 
                 sh 'sudo docker ps -f name=jenkins -q | xargs --no-run-if-empty docker container stop'
                 sh 'sudo docker container ls -a -fname=jenkins -q | xargs -r docker container rm'
-
-                # sh 'sudo docker ps -f name=sonarqube -q | xargs --no-run-if-empty docker container stop'
-                # sh 'sudo docker container ls -a -fname=sonarqube -q | xargs -r docker container rm'
             }
         }
 
