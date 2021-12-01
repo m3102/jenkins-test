@@ -32,6 +32,7 @@ services:
       - "sonarqube_data:/bitnami/sonarqube"
 
   postgresql:
+    user: root
     image: docker.io/bitnami/postgresql:13
     volumes:
       - "postgresql_data:/bitnami/postgresql"
