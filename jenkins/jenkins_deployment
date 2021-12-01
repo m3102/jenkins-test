@@ -38,7 +38,7 @@ pipeline {
         stage("Check Sonarqube Up") {
             steps: {
                 echo 'Waiting 2 minutes for deployment to complete prior starting smoke testing'
-                sleep time: 120000, unit: 'MILLISECONDS'
+                sh 'sleep 120'
             }
         }
 
