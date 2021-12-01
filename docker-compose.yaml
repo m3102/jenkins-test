@@ -11,56 +11,48 @@ services:
       - "5000"
     restart: unless-stopped
 
+  db:
+    image: postgres
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=sonardb
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - sonarnet
+
   sonarqube:
     image: sonarqube:latest
     container_name: sonarqube
     ports:
-      - "9005:9000"
+      - "9000:9000"
+      - "9092:9092"
     expose:
-      - 9005
+      - 9000
+    networks:
+      - sonarnet
     environment:
+      - sonar.jdbc:postgresql://db:5432/sonardb
+      - SONARQUBE_JDBC_USERNAME=admin
+      - SONARQUBE_JDBC_PASSWORD=admin
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
-  # db:
-  #   image: postgres
-  #   container_name: postgres
-  #   restart: unless-stopped
-  #   environment:
-  #     - POSTGRES_USER=admin
-  #     - POSTGRES_PASSWORD=admin
-  #     - POSTGRES_DB=sonardb
-  #   volumes:
-  #     - postgresql:/var/lib/postgresql
-  #     - postgresql_data:/var/lib/postgresql/data
-  #   networks:
-  #     - sonarnet
+networks:
+  sonarnet:
 
-  # sonarqube:
-  #   image: sonarqube:latest
-  #   container_name: sonarqube
-  #   ports:
-  #     - "9000:9000"
-  #     - "9092:9092"
-  #   expose:
-  #     - 9000
-  #   networks:
-  #     - sonarnet
-  #   environment:
-  #     - sonar.jdbc:postgresql://db:5432/sonardb
-  #     - SONARQUBE_JDBC_USERNAME=admin
-  #     - SONARQUBE_JDBC_PASSWORD=admin
-  #   volumes:
-  #     - sonarqube_conf:/opt/sonarqube/conf
-  #     - sonarqube_data:/opt/sonarqube/data
-  #     - sonarqube_extensions:/opt/sonarqube/extensions
-  #     - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
-# networks:
-#   sonarnet:
-
-# volumes:
-#   sonarqube_conf:
-#   sonarqube_data:
-#   sonarqube_extensions:
-#   sonarqube_bundled-plugins:
-#   postgresql:
-#   postgresql_data:
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_bundled-plugins:
+  postgresql:
+  postgresql_data:
