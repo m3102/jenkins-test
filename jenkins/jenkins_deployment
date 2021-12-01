@@ -28,7 +28,7 @@ pipeline {
             steps {
                 // Fetches github repository automatically and run docker
                 git branch: 'main', url: 'https://github.com/helloitsm3/jenkins-test.git'
-                sh "sudo docker-compose up --build -d"
+                sh "sudo docker-compose up -d --build"
             }
         }
 
@@ -43,10 +43,10 @@ pipeline {
                 script {
                     def scannerHome = tool "SonarQube";
                     withSonarQubeEnv("SonarQube") {
-                        sh "sonar-scanner \
+                        sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=OWASP \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=http://10.0.2.15:9000 \
+                            -Dsonar.host.url=localhost:9000 \
                             -Dsonar.login=testingtoken"
                     }
                 }
