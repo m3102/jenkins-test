@@ -74,11 +74,12 @@ pipeline {
             agent {
                 docker {
                     image 'python:3.9.5-slim'
+                    USER root
                 }
             }
 
             steps {
-                sh 'apt-get update && apt-get -y install libpq-dev gcc'
+                sh 'sudo apt-get update && apt-get -y install libpq-dev gcc'
                 sh 'apt-get install chromium -y && apt-get libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
                 sh 'pip install -r client/requirements.txt'
                 sh 'cd client/tests && python ui.py'
@@ -93,7 +94,7 @@ pipeline {
 
         stage('Unit / Integration Tests') {
             steps {
-                sh 'apt-get update && apt-get -y install libpq-dev gcc'
+                sh 'sudo apt-get update && apt-get -y install libpq-dev gcc'
                 sh 'apt-get install chromium -y && apt-get libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
                 sh 'pip install -r client/requirements.txt'
                 sh 'cd client/tests && python unit-integration.py'
