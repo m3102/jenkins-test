@@ -42,20 +42,20 @@ pipeline {
             }
         }
 
-        stage("Code Quality Check via SonarQube") {
-            steps {
-                script {
-                    def scannerHome = tool "SonarQube";
-                    withSonarQubeEnv("SonarQube") {
-                        sh "${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=OWASP \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://192.168.1.93:9005 \
-                            -Dsonar.login=testingtoken"
-                    }
-                }
-            }
-        }
+        # stage("Code Quality Check via SonarQube") {
+        #     steps {
+        #         script {
+        #             def scannerHome = tool "SonarQube";
+        #             withSonarQubeEnv("SonarQube") {
+        #                 sh "${scannerHome}/bin/sonar-scanner \
+        #                     -Dsonar.projectKey=OWASP \
+        #                     -Dsonar.sources=. \
+        #                     -Dsonar.host.url=http://192.168.1.93:9005 \
+        #                     -Dsonar.login=testingtoken"
+        #             }
+        #         }
+        #     }
+        # }
     }
 
     post {
