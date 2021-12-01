@@ -35,6 +35,7 @@ pipeline {
         stage("Checkout") {
             steps {
                 git branch: "master", url: "https://github.com/OWASP/Vulnerable-Web-Application.git"
+                sh "SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true"
             }
         }
 
@@ -46,7 +47,7 @@ pipeline {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=OWASP \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=localhost:9000 \
+                            -Dsonar.host.url=http://localhost:9000 \
                             -Dsonar.login=testingtoken"
                     }
                 }
