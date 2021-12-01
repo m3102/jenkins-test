@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   client:
+    user: root
     container_name: client
     build:
       context: ./client
