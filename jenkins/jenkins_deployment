@@ -36,8 +36,10 @@ pipeline {
         }
 
         stage("Check Sonarqube Up") {
-            echo 'Waiting 2 minutes for deployment to complete prior starting smoke testing'
-            sleep(time: 120, unit:"SECONDS")
+            steps: {
+                echo 'Waiting 2 minutes for deployment to complete prior starting smoke testing'
+                sleep time: 120000, unit: 'MILLISECONDS'
+            }
         }
 
         stage("Code Quality Check via SonarQube") {
