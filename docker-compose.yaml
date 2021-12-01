@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     environment:
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=sonardb
     volumes:
       - postgresql:/var/lib/postgresql

@@ -50,7 +50,7 @@ pipeline {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=OWASP \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=http://192.168.1.93:9005 \
+                            -Dsonar.host.url=http://localhost:9005 \
                             -Dsonar.login=testingtoken"
                     }
                 }
