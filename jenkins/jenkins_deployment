@@ -69,5 +69,47 @@ pipeline {
                 }
             }
         }
+
+        stage('UI Test') {
+            agent {
+                docker {
+                    image 'python:3.9.5-slim'
+                }
+            }
+
+            steps {
+                sh 'apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
+                sh 'pip install -r client/requirements.txt'
+                sh 'cd client/tests && python ui.py'
+            } 
+
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/ui-test-reports/*.xml'
+                }
+            } 
+        }
+
+        stage('Unit / Integration Tests') {
+            agent {
+                docker {
+                    image 'python:3.9.5-slim'
+                }
+            }
+
+            steps {
+                sh 'apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
+                sh 'pip install -r client/requirements.txt'
+                sh 'cd client/tests && python unit-integration.py'
+            }
+
+            post {
+                always {
+                    junit 'client/unit-integration-test-reports/*.xml'
+                }
+            } 
+        }
     }
 }
