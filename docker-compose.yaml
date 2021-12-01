@@ -12,42 +12,41 @@ services:
     restart: unless-stopped
 
   sonarqube:
-    image: sonarqube
+    image: bitnami/sonarqube:latest
     container_name: sonarqube
     ports:
       - "9005:9000"
     expose:
       - 9005
+    depends_on:
+      - postgresql
     networks:
       - sonarnet
     environment:
-      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+      - ALLOW_EMPTY_PASSWORD=yes
+      - SONARQUBE_DATABASE_HOST=postgresql
+      - SONARQUBE_DATABASE_PORT_NUMBER=5432
+      - SONARQUBE_DATABASE_USER=bn_sonarqube
+      - SONARQUBE_DATABASE_NAME=bitnami_sonarqube
     volumes:
-      - sonarqube_conf:/opt/sonarqube/conf
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
+      - "sonarqube_data:/bitnami/sonarqube"
 
-  db:
-    image: postgres
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
-      - POSTGRES_DB=sonar
+  postgresql:
+    image: docker.io/bitnami/postgresql:13
     volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-    networks:
-      - sonarnet
+      - "postgresql_data:/bitnami/postgresql"
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - POSTGRESQL_USERNAME=bn_sonarqube
+      - POSTGRESQL_DATABASE=bitnami_sonarqube
 
 networks:
   sonarnet:
     driver: bridge
 
 volumes:
-  sonarqube_conf:
-  sonarqube_data:
-  sonarqube_extensions:
-  postgresql:
   postgresql_data:
+    driver: local
+  sonarqube_data:
+    driver: local
