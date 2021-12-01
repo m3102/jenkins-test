@@ -35,7 +35,6 @@ pipeline {
         stage("Checkout") {
             steps {
                 git branch: "master", url: "https://github.com/OWASP/Vulnerable-Web-Application.git"
-                sh "SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true"
             }
         }
 
@@ -52,6 +51,12 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            recordIssues enabledForFailure: true, tool: sonarQube()
         }
     }
 }
