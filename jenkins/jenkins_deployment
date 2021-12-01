@@ -72,9 +72,9 @@ pipeline {
 
         stage('UI Test') {
             steps {
-                sh 'sudo apt-get update && sudo apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'sudo apt-get update && sudo apt-get -y install libpq-dev gcc'
                 sh 'sudo apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
-                sh 'pip install -r client/requirements.txt'
+                sh 'sudo apt-get install python3.8 && python -m pip install -r client/requirements.txt'
                 sh 'cd client/tests && python ui.py'
             } 
 
@@ -87,9 +87,9 @@ pipeline {
 
         stage('Unit / Integration Tests') {
             steps {
-                sh 'apt-get update && apt-get -y install libpq-dev gcc && pip install psycopg2'
+                sh 'apt-get update && apt-get -y install libpq-dev gcc'
                 sh 'apt-get install -y chromium libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1'
-                sh 'pip install -r client/requirements.txt'
+                sh 'sudo apt-get install python3.8 && python -m pip install -r client/requirements.txt'
                 sh 'cd client/tests && python unit-integration.py'
             }
 
