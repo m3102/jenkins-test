@@ -2,6 +2,19 @@ pipeline {
     agent any
 
     stages {
+        stage('OWASP DependencyCheck') {    
+            agent any
+            steps {
+                dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
+            }
+
+            post {
+                always {
+                    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                }
+            }
+        }
+        
         stage('Prebuild') {
             agent any
             steps {
