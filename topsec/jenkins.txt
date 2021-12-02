@@ -74,7 +74,7 @@ Alternatively you can do
 
 
 
-
+sudo apt-get remove --purge jenkins .. Complete remove jenkins
 
 
 Jenkins Plugin
