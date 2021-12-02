@@ -45,6 +45,14 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
+  sonarscanner:
+    container_name: sonarscanner
+    image: newtmitch/sonar-scanner
+    networks:
+      - sonarnet
+    volumes:
+      - ./:/usr/src
+
 networks:
   sonarnet:
 
